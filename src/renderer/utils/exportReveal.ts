@@ -85,6 +85,9 @@ export function generateFullHTML(presentation: Presentation, options: ExportOpti
       slideNumber: true,
       hash: true,
       transition: 'slide',
+      width: 1280,
+      height: 720,
+      margin: 0,
     });
   </script>
 </body>

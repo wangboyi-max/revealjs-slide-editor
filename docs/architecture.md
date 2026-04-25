@@ -79,6 +79,31 @@ type: L1
 - 代码模式：显示代码编辑器+预览，隐藏画布编辑交互
 - 底层共享同一JSON数据模型，双向同步始终生效
 
+### 3.2 画布架构（Viewport + Stage）
+
+画布采用 **Viewport（外层交互层） + Stage（内层固定尺寸舞台） 两层结构**，Reveal.js 在 Stage 内部初始化但**不参与缩放**，所有缩放和平移由外层 transform 控制。这样保证编辑预览与导出 HTML 像素级一致，并解决了窗口尺寸变化时画布消失、Reveal 内部 layout 与编辑器交互冲突的问题。
+
+**两层结构**：
+| 层 | 职责 |
+|----|------|
+| Viewport | 占满 flex 区域，`overflow:hidden`，监听 pointer/wheel/键盘事件，使用 ResizeObserver 监听自身尺寸变化 |
+| Stage | 固定逻辑分辨率 **1280×720**（标准 16:9），`position:absolute` 居中，通过 `transform: translate(panX,panY) scale(zoom/100)` 控制平移与缩放 |
+
+**Reveal.js 配置**：在 Stage 内部初始化，使用 `embedded:true, width:1280, height:720, margin:0, minScale:1, maxScale:1`。`minScale=maxScale=1` 显式禁用 Reveal 自身的缩放计算，让外层 transform 成为唯一缩放源。
+
+**状态绑定**：所有画布交互状态集中在 `uiStore`：`zoom`（25/50/75/100/125/150/200/300/400 档位，clamp 到 [25,400]）、`panX`/`panY`、`isPanning`、`spaceDown`，配套 actions：`setZoom`/`zoomIn`/`zoomOut`/`setPan`/`resetView`/`setIsPanning`/`setSpaceDown`。
+
+**编辑/导出一致性**：Stage 尺寸 1280×720 必须与 `exportReveal.ts` 中 Reveal.initialize 的 `width:1280, height:720, margin:0` 严格保持一致 — 这是「编辑预览 = 导出效果」硬约束的实现基础。**修改画布尺寸时，两处必须同步修改**。
+
+**Wheel 事件特殊处理**：Ctrl+滚轮缩放必须使用原生 `addEventListener('wheel', fn, { passive: false })`，**不能**使用 React 合成事件 `onWheel`。原因：React 合成 wheel 事件默认 passive，调用 `preventDefault()` 会抛出 `Unable to preventDefault inside passive event listener invocation` 错误。
+
+**交互方式**：
+- 平移：中键拖动 / Space+左键拖动 / 空白处左键拖动（通过 `data-element-id` + `closest()` 检测点击是否落在元素上）
+- 缩放：Ctrl+滚轮 / Ctrl+= / Ctrl+- / Ctrl+0（resetView）
+- 工具栏：缩小/百分比按钮（点击重置）/放大
+
+**HMR 友好**：Reveal 实例使用本地 ref 管理，cleanup 时调用 `destroy()`；不使用模块级全局标志，避免热更新产生双实例。
+
 ---
 
 ## 4. 数据流

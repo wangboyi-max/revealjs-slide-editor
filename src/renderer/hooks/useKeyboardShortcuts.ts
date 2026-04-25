@@ -1,10 +1,45 @@
 import { useEffect } from 'react';
 import { usePresentationStore } from '../stores/presentationStore';
+import { useUIStore } from '../stores/uiStore';
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tag = target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  if (target.isContentEditable) return true;
+  return false;
+}
 
 export function useKeyboardShortcuts() {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const isCtrlOrCmd = event.ctrlKey || event.metaKey;
+
+      // Zoom shortcuts
+      if (isCtrlOrCmd && (event.key === '=' || event.key === '+')) {
+        event.preventDefault();
+        useUIStore.getState().zoomIn();
+        return;
+      }
+      if (isCtrlOrCmd && event.key === '-') {
+        event.preventDefault();
+        useUIStore.getState().zoomOut();
+        return;
+      }
+      if (isCtrlOrCmd && event.key === '0') {
+        event.preventDefault();
+        useUIStore.getState().resetView();
+        return;
+      }
+
+      // Space pan toggle (only when not editing text)
+      if (event.key === ' ' && !isEditableTarget(event.target)) {
+        event.preventDefault();
+        if (!useUIStore.getState().spaceDown) {
+          useUIStore.getState().setSpaceDown(true);
+        }
+        return;
+      }
 
       if (isCtrlOrCmd && event.key === 's') {
         event.preventDefault();
@@ -46,7 +81,17 @@ export function useKeyboardShortcuts() {
       }
     }
 
+    function handleKeyUp(event: KeyboardEvent) {
+      if (event.key === ' ') {
+        useUIStore.getState().setSpaceDown(false);
+      }
+    }
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, []);
 }

@@ -18,13 +18,6 @@ description: 构建并启动 Reveal Editor Electron GUI 界面
    - 开发模式（推荐）：`npm run dev`
    - 这会通过 `concurrently` 同时启动 Vite dev server 和 Electron 主进程
 
-## 快速启动命令
-
-```bash
-# 一行命令同时启动 Vite + Electron（开发模式）
-npm run dev
-```
-
 ## 常见问题
 
 | 问题 | 解决方案 |

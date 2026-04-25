@@ -9,6 +9,8 @@ import {
   FileDownload as ExportIcon,
   Visibility as VisualIcon,
   Code as CodeIcon,
+  ZoomIn as ZoomInIcon,
+  ZoomOut as ZoomOutIcon,
 } from '@mui/icons-material';
 import { usePresentationStore } from '../stores/presentationStore';
 import { useUIStore, EditorMode } from '../stores/uiStore';
@@ -16,7 +18,7 @@ import { exportToFile } from '../utils/exportReveal';
 
 const Toolbar: React.FC = () => {
   const { undo, redo, past, future } = usePresentationStore();
-  const { editorMode, setEditorMode } = useUIStore();
+  const { editorMode, setEditorMode, zoom, zoomIn, zoomOut, resetView } = useUIStore();
 
   const handleNew = () => {
     if (window.confirm('创建新演示文稿？当前未保存的内容将丢失。')) {
@@ -97,6 +99,18 @@ const Toolbar: React.FC = () => {
           </IconButton>
           <IconButton size="small" title="重做 (Ctrl+Y)" onClick={redo} disabled={!canRedo}>
             <RedoIcon />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 2, flexGrow: 0 }}>
+          <IconButton size="small" title="缩小 (Ctrl+-)" onClick={zoomOut}>
+            <ZoomOutIcon />
+          </IconButton>
+          <Button size="small" sx={{ minWidth: 60 }} title="重置视图 (Ctrl+0)" onClick={resetView}>
+            {zoom}%
+          </Button>
+          <IconButton size="small" title="放大 (Ctrl+=)" onClick={zoomIn}>
+            <ZoomInIcon />
           </IconButton>
         </Box>
 

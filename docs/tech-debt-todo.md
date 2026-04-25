@@ -40,6 +40,7 @@ Todayʼs date is 2026/04/25.
 - 2026/04/25: 初始化技术债务看板
 - 2026/04/25: 添加代码检视问题 (CR-001 ~ CR-011)，合并为单一债务清单
 - 2026/04/25: 全部17个问题已修复
+- 2026/04/25: 画布修复（CANVAS-001~004），引入 Viewport+Stage 两层架构
 
 ## 处理记录
 
@@ -60,3 +61,7 @@ Todayʼs date is 2026/04/25.
 | 2026/04/25 | TD-002 | 更新architecture.md状态管理描述为Zustand | ✅ 通过lint和测试 |
 | 2026/04/25 | TD-005 | 更新CLAUDE.md文件结构描述为扁平结构 | ✅ 通过lint和测试 |
 | 2026/04/25 | TD-006 | 在useKeyboardShortcuts中实现Ctrl+C/V复制粘贴 | ✅ 通过lint和测试 |
+| 2026/04/25 | CANVAS-001 | 画布无法拖拽/缩放 — 引入 Viewport+Stage 两层架构 + uiStore 平移缩放状态 | ✅ lint/typecheck/41测试通过 |
+| 2026/04/25 | CANVAS-002 | 画布显示不完整 — Stage 固定 1280×720，Reveal embedded+minScale/maxScale=1 禁用内部缩放 | ✅ |
+| 2026/04/25 | CANVAS-003 | 窗口缩放时画布消失 — Stage 用 absolute+transform 不依赖父容器尺寸，ResizeObserver 替代 window resize | ✅ |
+| 2026/04/25 | CANVAS-004 | Ctrl+滚轮缩放报 "Unable to preventDefault inside passive event listener" — React onWheel 默认 passive，改用原生 addEventListener('wheel', fn, {passive:false}) | ✅ |

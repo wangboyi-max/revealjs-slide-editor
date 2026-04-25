@@ -8,10 +8,26 @@ declare module 'reveal.js' {
     loop?: boolean;
     autoSlide?: number;
     transition?: string;
+    embedded?: boolean;
+    width?: number;
+    height?: number;
+    margin?: number;
+    minScale?: number;
+    maxScale?: number;
+  }
+
+  interface RevealDeck {
+    slide: (index: number) => void;
+    layout: () => void;
+    sync: () => void;
+    destroy: () => void;
   }
 
   interface RevealApi {
-    initialize: (options?: RevealOptions) => { slide: (index: number) => void };
+    initialize: (options?: RevealOptions) => Promise<RevealDeck> | RevealDeck;
+    layout: () => void;
+    sync: () => void;
+    destroy: () => void;
   }
 
   const Reveal: RevealApi;

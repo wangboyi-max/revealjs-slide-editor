@@ -1,11 +1,21 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import { Box } from '@mui/material';
 import { usePresentationStore } from '../stores/presentationStore';
+import type { editor } from 'monaco-editor';
 
 const CodeEditor: React.FC = () => {
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const { slides, currentSlideIndex } = usePresentationStore();
   const currentSlide = slides[currentSlideIndex];
+
+  // Cleanup editor on unmount to prevent "Canceled" warnings
+  useEffect(() => {
+    return () => {
+      editorRef.current?.dispose();
+      editorRef.current = null;
+    };
+  }, []);
 
   const handleEditorChange = useCallback((value: string | undefined) => {
     if (!value) return;
@@ -21,6 +31,7 @@ const CodeEditor: React.FC = () => {
   }, []);
 
   const handleEditorMount: OnMount = (editor) => {
+    editorRef.current = editor;
     // Set editor to format JSON on paste
     editor.getModel()?.updateOptions({ tabSize: 2 });
   };
