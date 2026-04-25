@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(taskkill //F //IM git.exe)",
+      "Bash(rm -rf 'C:\\\\Users\\\\Administrator\\\\.claude\\\\plugins\\\\marketplaces\\\\thedotmack-claude-mem')"
+    ]
+  }
+}
