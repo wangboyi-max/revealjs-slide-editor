@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { Box } from '@mui/material';
 import Toolbar from './components/Toolbar';
 import SlideList from './components/SlideList';
@@ -15,9 +15,12 @@ const App: React.FC = () => {
   useAutoSave();
   useKeyboardShortcuts();
   const { editorMode } = useUIStore();
+  const menuListenersRef = useRef(false);
 
   const handleNew = useCallback(() => {
+    console.log('[Menu] 收到新建命令');
     if (confirm('确定要新建演示文稿吗？当前未保存的内容将丢失。')) {
+      console.log('[Menu] 用户确认新建，重置状态');
       usePresentationStore.setState({
         slides: [{ id: '1', elements: [], background: '#ffffff', transition: 'slide' }],
         currentSlideIndex: 0,
@@ -25,6 +28,9 @@ const App: React.FC = () => {
         past: [],
         future: [],
       });
+      console.log('[Menu] 状态已重置');
+    } else {
+      console.log('[Menu] 用户取消新建');
     }
   }, []);
 
@@ -41,6 +47,9 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (menuListenersRef.current) return;
+    menuListenersRef.current = true;
+
     window.electronAPI.on('menu:new', handleNew);
     window.electronAPI.on('menu:open', handleOpen);
     window.electronAPI.on('menu:save', handleSave);

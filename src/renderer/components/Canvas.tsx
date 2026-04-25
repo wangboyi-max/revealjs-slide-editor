@@ -6,27 +6,64 @@ import { usePresentationStore } from '../stores/presentationStore';
 import AudioElement from './AudioElement';
 import VideoElement from './VideoElement';
 
+// 模块级标志
+let revealInitialized = false;
+let revealInitializing = false;
+
 const Canvas: React.FC = () => {
   const deckRef = useRef<HTMLDivElement>(null);
   const revealApi = useRef<{ slide: (index: number) => void } | null>(null);
   const { slides, currentSlideIndex, selectedElementId } = usePresentationStore();
 
   useEffect(() => {
-    if (deckRef.current && !revealApi.current) {
-      (Reveal.initialize({
-        controls: false,
-        progress: false,
-        history: false,
-        keyboard: false,
-        touch: false,
-        loop: true,
-        autoSlide: 0,
-        transition: 'none',
-      }) as unknown as Promise<{ slide: (index: number) => void }>).then((api) => {
-        revealApi.current = api;
-        api.slide(currentSlideIndex);
-      });
-    }
+    if (!deckRef.current || revealApi.current) return;
+
+    const initReveal = () => {
+      // 防止重复初始化
+      if (revealInitialized) {
+        if (revealApi.current) {
+          revealApi.current.slide(currentSlideIndex);
+        }
+        return;
+      }
+      // 防止并发初始化
+      if (revealInitializing) return;
+      revealInitializing = true;
+
+      try {
+        (Reveal.initialize({
+          controls: false,
+          progress: false,
+          history: false,
+          keyboard: false,
+          touch: false,
+          loop: true,
+          autoSlide: 0,
+          transition: 'none',
+        }) as unknown as Promise<{ slide: (index: number) => void }>).then((api) => {
+          revealInitialized = true;
+          revealInitializing = false;
+          revealApi.current = api;
+          api.slide(currentSlideIndex);
+        }).catch((err) => {
+          revealInitializing = false;
+          // 忽略"已初始化"错误
+          if (err.message?.includes('already been initialized')) {
+            revealInitialized = true;
+          }
+        });
+      } catch (err: unknown) {
+        revealInitializing = false;
+        if ((err as Error).message?.includes('already been initialized')) {
+          revealInitialized = true;
+        }
+      }
+    };
+
+    // 延迟初始化
+    const timer = setTimeout(initReveal, 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

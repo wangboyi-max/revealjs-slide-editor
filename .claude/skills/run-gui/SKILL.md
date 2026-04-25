@@ -11,8 +11,8 @@ description: 构建并启动 Reveal Editor Electron GUI 界面
    - 验证 `node_modules/electron/dist/electron.exe` 是否存在
    - 若不存在，执行 `node node_modules/electron/install.js` 下载二进制
 
-2. **使用国内镜像（可选）**
-   - 若下载慢，执行：`ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`
+2. **使用国内镜像**
+   - 执行：`ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`
 
 3. **启动 GUI**
    - 开发模式（推荐）：`npm run dev`
