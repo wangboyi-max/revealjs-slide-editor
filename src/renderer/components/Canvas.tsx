@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 import Reveal from 'reveal.js';
+import DOMPurify from 'dompurify';
 import { usePresentationStore } from '../stores/presentationStore';
 import AudioElement from './AudioElement';
 import VideoElement from './VideoElement';
@@ -84,7 +85,7 @@ const Canvas: React.FC = () => {
                   }}
                 >
                   {element.type === 'text' && (
-                    <div dangerouslySetInnerHTML={{ __html: element.content }} />
+                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(element.content) }} />
                   )}
                   {element.type === 'image' && (
                     <img src={element.content} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

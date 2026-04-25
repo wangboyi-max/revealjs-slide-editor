@@ -74,7 +74,11 @@ const SlideList: React.FC = () => {
               index={index}
               isSelected={index === currentSlideIndex}
               onClick={() => selectSlide(index)}
-              onDelete={() => deleteSlide(slide.id)}
+              onDelete={() => {
+              if (confirm('确定要删除这张幻灯片吗？')) {
+                deleteSlide(slide.id);
+              }
+            }}
             />
           ))}
         </Box>

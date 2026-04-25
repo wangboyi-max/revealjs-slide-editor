@@ -25,6 +25,11 @@ export interface OpenDialogOptions {
   properties?: ('openFile' | 'openDirectory' | 'multiSelections')[];
 }
 
+// Track wrapped callbacks for proper unsubscribe
+const wrappedCallbacks = new Map<string, Map<(...args: unknown[]) => void, (_event: Electron.IpcRendererEvent, ...args: unknown[]) => void>>();
+
+const validChannels = ['menu:new', 'menu:open', 'menu:save', 'menu:saveAs', 'menu:about'];
+
 const api = {
   file: {
     read: (filePath: string): Promise<FileResult> => ipcRenderer.invoke('file:read', filePath),
@@ -43,15 +48,27 @@ const api = {
       ipcRenderer.invoke('export:html', html, defaultFileName),
   },
   on: (channel: string, callback: (...args: unknown[]) => void) => {
-    const validChannels = ['menu:new', 'menu:open', 'menu:save', 'menu:saveAs', 'menu:about'];
-    if (validChannels.includes(channel)) {
-      ipcRenderer.on(channel, (_event, ...args) => callback(...args));
+    if (!validChannels.includes(channel)) return;
+
+    const wrappedCallback = (_event: Electron.IpcRendererEvent, ...args: unknown[]) => callback(...args);
+
+    if (!wrappedCallbacks.has(channel)) {
+      wrappedCallbacks.set(channel, new Map());
     }
+    wrappedCallbacks.get(channel)!.set(callback, wrappedCallback);
+
+    ipcRenderer.on(channel, wrappedCallback);
   },
   off: (channel: string, callback: (...args: unknown[]) => void) => {
-    const validChannels = ['menu:new', 'menu:open', 'menu:save', 'menu:saveAs', 'menu:about'];
-    if (validChannels.includes(channel)) {
-      ipcRenderer.removeListener(channel, callback);
+    if (!validChannels.includes(channel)) return;
+
+    const channelCallbacks = wrappedCallbacks.get(channel);
+    if (!channelCallbacks) return;
+
+    const wrappedCallback = channelCallbacks.get(callback);
+    if (wrappedCallback) {
+      ipcRenderer.removeListener(channel, wrappedCallback);
+      channelCallbacks.delete(callback);
     }
   },
 };

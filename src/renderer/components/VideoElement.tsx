@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Box } from '@mui/material';
 
 interface VideoElementProps {
@@ -16,14 +16,6 @@ const VideoElement: React.FC<VideoElementProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current && src) {
-      videoRef.current.src = src;
-    }
-  }, [src]);
-
   return (
     <Box
       onClick={onSelect}
@@ -37,7 +29,7 @@ const VideoElement: React.FC<VideoElementProps> = ({
       }}
     >
       <video
-        ref={videoRef}
+        src={src}
         controls
         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
       />

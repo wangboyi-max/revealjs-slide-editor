@@ -7,7 +7,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow): void {
       const content = await fs.promises.readFile(filePath, 'utf-8');
       return { success: true, data: content };
     } catch (error) {
-      return { success: false, error: (error as Error).message };
+      return { success: false, error: `读取文件失败: ${filePath}, 错误: ${(error as Error).message}` };
     }
   });
 
@@ -16,7 +16,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow): void {
       await fs.promises.writeFile(filePath, content, 'utf-8');
       return { success: true };
     } catch (error) {
-      return { success: false, error: (error as Error).message };
+      return { success: false, error: `写入文件失败: ${filePath}, 错误: ${(error as Error).message}` };
     }
   });
 
@@ -49,7 +49,7 @@ export function setupIpcHandlers(mainWindow: BrowserWindow): void {
       await fs.promises.writeFile(result.filePath, html, 'utf-8');
       return { success: true, filePath: result.filePath };
     } catch (error) {
-      return { success: false, error: (error as Error).message };
+      return { success: false, error: `导出HTML失败: ${defaultFileName}, 错误: ${(error as Error).message}` };
     }
   });
 }

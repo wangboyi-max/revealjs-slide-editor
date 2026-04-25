@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Box } from '@mui/material';
 
 interface AudioElementProps {
@@ -16,14 +16,6 @@ const AudioElement: React.FC<AudioElementProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    if (audioRef.current && src) {
-      audioRef.current.src = src;
-    }
-  }, [src]);
-
   return (
     <Box
       onClick={onSelect}
@@ -39,7 +31,7 @@ const AudioElement: React.FC<AudioElementProps> = ({
         borderRadius: 1,
       }}
     >
-      <audio ref={audioRef} controls style={{ width: '100%', height: '100%' }} />
+      <audio src={src} controls style={{ width: '100%', height: '100%' }} />
     </Box>
   );
 };

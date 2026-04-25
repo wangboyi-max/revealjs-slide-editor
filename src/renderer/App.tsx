@@ -1,43 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Box } from '@mui/material';
 import Toolbar from './components/Toolbar';
 import SlideList from './components/SlideList';
 import Canvas from './components/Canvas';
+import CodeEditor from './components/CodeEditor';
 import PropertiesPanel from './components/PropertiesPanel';
 import StatusBar from './components/StatusBar';
 import { useAutoSave } from './hooks/useAutoSave';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { usePresentationStore } from './stores/presentationStore';
+import { useUIStore } from './stores/uiStore';
 
 const App: React.FC = () => {
   useAutoSave();
   useKeyboardShortcuts();
+  const { editorMode } = useUIStore();
+
+  const handleNew = useCallback(() => {
+    if (confirm('确定要新建演示文稿吗？当前未保存的内容将丢失。')) {
+      usePresentationStore.setState({
+        slides: [{ id: '1', elements: [], background: '#ffffff', transition: 'slide' }],
+        currentSlideIndex: 0,
+        selectedElementId: null,
+        past: [],
+        future: [],
+      });
+    }
+  }, []);
+
+  const handleOpen = useCallback(() => {
+    usePresentationStore.getState().loadFromFile();
+  }, []);
+
+  const handleSave = useCallback(() => {
+    usePresentationStore.getState().saveToFile();
+  }, []);
+
+  const handleSaveAs = useCallback(() => {
+    usePresentationStore.getState().saveToFile();
+  }, []);
 
   useEffect(() => {
-    const handleNew = () => {
-      if (confirm('确定要新建演示文稿吗？当前未保存的内容将丢失。')) {
-        usePresentationStore.setState({
-          slides: [{ id: '1', elements: [], background: '#ffffff', transition: 'slide' }],
-          currentSlideIndex: 0,
-          selectedElementId: null,
-          past: [],
-          future: [],
-        });
-      }
-    };
-
-    const handleOpen = () => {
-      usePresentationStore.getState().loadFromFile();
-    };
-
-    const handleSave = () => {
-      usePresentationStore.getState().saveToFile();
-    };
-
-    const handleSaveAs = () => {
-      usePresentationStore.getState().saveToFile();
-    };
-
     window.electronAPI.on('menu:new', handleNew);
     window.electronAPI.on('menu:open', handleOpen);
     window.electronAPI.on('menu:save', handleSave);
@@ -49,7 +52,7 @@ const App: React.FC = () => {
       window.electronAPI.off('menu:save', handleSave);
       window.electronAPI.off('menu:saveAs', handleSaveAs);
     };
-  }, []);
+  }, [handleNew, handleOpen, handleSave, handleSaveAs]);
 
   return (
     <Box
@@ -69,8 +72,19 @@ const App: React.FC = () => {
         }}
       >
         <SlideList />
-        <Canvas />
-        <PropertiesPanel />
+        {editorMode === 'visual' ? (
+          <>
+            <Canvas />
+            <PropertiesPanel />
+          </>
+        ) : (
+          <>
+            <Box sx={{ flex: 1, display: 'flex' }}>
+              <CodeEditor />
+              <Canvas />
+            </Box>
+          </>
+        )}
       </Box>
       <StatusBar />
     </Box>

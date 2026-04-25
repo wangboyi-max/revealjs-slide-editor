@@ -138,12 +138,15 @@ src/
 ├── preload/                 # 预加载脚本
 │   └── index.ts            # 暴露安全API
 └── renderer/               # React应用
-    ├── components/         # UI组件
-    │   ├── Canvas/
-    │   │   ├── Canvas.tsx
-    │   │   ├── Canvas.test.tsx
-    │   │   └── index.ts
-    │   └── common/         # 公共组件
+    ├── components/         # UI组件（扁平结构）
+    │   ├── Canvas.tsx
+    │   ├── PropertiesPanel.tsx
+    │   ├── SlideList.tsx
+    │   ├── StatusBar.tsx
+    │   ├── Toolbar.tsx
+    │   ├── Toolbox.tsx
+    │   ├── AudioElement.tsx
+    │   └── VideoElement.tsx
     ├── stores/             # Zustand stores
     │   ├── presentationStore.ts
     │   └── uiStore.ts

@@ -20,7 +20,7 @@ type: L1
 
 ## 1. 技术栈
 
-核心技术栈为 Electron（跨平台桌面）、React 18（UI框架）、TypeScript（类型安全）、MUI v5（组件库）。渲染层使用 Canvas API 实现幻灯片绘制，配合 reveal.js 进行 HTML 导出。状态管理采用 React Context + useReducer 模式，文件持久化使用 JSON 格式。
+核心技术栈为 Electron（跨平台桌面）、React 18（UI框架）、TypeScript（类型安全）、MUI v5（组件库）。渲染层使用 Canvas API 实现幻灯片绘制，配合 reveal.js 进行 HTML 导出。状态管理采用 Zustand 模式，文件持久化使用 JSON 格式。
 
 ---
 
@@ -32,7 +32,7 @@ type: L1
 
 ## 3. 模块设计
 
-主要模块包括：Canvas 模块负责幻灯片的绘制和交互；SlideList 模块管理幻灯片列表和排序；Toolbox 模块提供工具栏和元素选择；PropertyPanel 模块展示和编辑元素属性；ExportModule 模块处理导出逻辑。各模块通过 React Context 共享状态，通过事件系统解耦。
+主要模块包括：Canvas 模块负责幻灯片的绘制和交互；SlideList 模块管理幻灯片列表和排序；Toolbox 模块提供工具栏和元素选择；PropertyPanel 模块展示和编辑元素属性；ExportModule 模块处理导出逻辑。各模块通过 Zustand Store 共享状态，通过事件系统解耦。
 
 ### 3.1 双模式编辑器
 
@@ -83,7 +83,7 @@ type: L1
 
 ## 4. 数据流
 
-数据模型采用 JSON 结构存储幻灯片信息，包含 slides（幻灯片数组）、metadata（元数据）、settings（配置）三个顶层字段。每张幻灯片包含 id、background、elements（元素数组）等属性。数据流遵循「用户操作 → Action → Reducer → State 更新 → 视图重绘」的单向数据流模式，最终导出时将 JSON 模型转换为 reveal.js HTML 结构。
+数据模型采用 JSON 结构存储幻灯片信息，包含 slides（幻灯片数组）、metadata（元数据）、settings（配置）三个顶层字段。每张幻灯片包含 id、background、elements（元素数组）等属性。数据流遵循「用户操作 → Store Action → State 更新 → 视图重绘」的单向数据流模式，最终导出时将 JSON 模型转换为 reveal.js HTML 结构。
 
 ---
 

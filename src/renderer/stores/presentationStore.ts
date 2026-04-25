@@ -68,9 +68,8 @@ const initialState = {
   future: [] as HistoryState[],
 };
 
-let idCounter = 1;
 function generateId(): string {
-  return `slide_${Date.now()}_${idCounter++}`;
+  return crypto.randomUUID();
 }
 
 function cloneSlides(slides: Slide[]): Slide[] {
