@@ -8,12 +8,12 @@ import VideoElement from './VideoElement';
 
 const Canvas: React.FC = () => {
   const deckRef = useRef<HTMLDivElement>(null);
-  const revealApi = useRef<ReturnType<typeof Reveal.initialize> | null>(null);
+  const revealApi = useRef<{ slide: (index: number) => void } | null>(null);
   const { slides, currentSlideIndex, selectedElementId } = usePresentationStore();
 
   useEffect(() => {
     if (deckRef.current && !revealApi.current) {
-      revealApi.current = Reveal.initialize({
+      (Reveal.initialize({
         controls: false,
         progress: false,
         history: false,
@@ -22,6 +22,9 @@ const Canvas: React.FC = () => {
         loop: true,
         autoSlide: 0,
         transition: 'none',
+      }) as unknown as Promise<{ slide: (index: number) => void }>).then((api) => {
+        revealApi.current = api;
+        api.slide(currentSlideIndex);
       });
     }
   }, []);
