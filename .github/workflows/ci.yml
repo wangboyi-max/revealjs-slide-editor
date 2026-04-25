@@ -13,18 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Type check
         run: npm run typecheck
@@ -35,18 +31,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run tests
         run: npm test
@@ -58,18 +50,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build
         run: npm run build
