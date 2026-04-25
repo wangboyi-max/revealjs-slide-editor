@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { generateSlideHTML, generateFullHTML, DEFAULT_OPTIONS, exportToFile } from '../../../src/renderer/utils/exportReveal';
 import { Presentation, Slide, Element } from '../../../src/renderer/stores/presentationStore';
 
@@ -213,6 +213,56 @@ describe('exportReveal', () => {
       expect(DEFAULT_OPTIONS.standalone).toBe(true);
       expect(DEFAULT_OPTIONS.theme).toBe('black');
       expect(DEFAULT_OPTIONS.includeNotes).toBe(true);
+    });
+  });
+
+  describe('exportToFile', () => {
+    it('should return success with filePath when dialog is confirmed', async () => {
+      const mockDialogResult = { canceled: false, filePath: '/path/to/file.html' };
+      const mockWriteResult = { success: true };
+
+      window.electronAPI = {
+        dialog: {
+          showSaveDialog: vi.fn().mockResolvedValue(mockDialogResult),
+        },
+        file: {
+          write: vi.fn().mockResolvedValue(mockWriteResult),
+        },
+      } as any;
+
+      const result = await exportToFile(mockPresentation);
+
+      expect(result.success).toBe(true);
+      expect(result.filePath).toBe('/path/to/file.html');
+    });
+
+    it('should return error when dialog is canceled', async () => {
+      window.electronAPI = {
+        dialog: {
+          showSaveDialog: vi.fn().mockResolvedValue({ canceled: true }),
+        },
+      } as any;
+
+      const result = await exportToFile(mockPresentation);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Export cancelled');
+    });
+
+    it('should return error when write fails', async () => {
+      window.electronAPI = {
+        dialog: {
+          showSaveDialog: vi.fn().mockResolvedValue({ canceled: false, filePath: '/path/to/file.html' }),
+        },
+        file: {
+          write: vi.fn().mockResolvedValue({ success: false, error: 'Write failed' }),
+        },
+      } as any;
+
+      const result = await exportToFile(mockPresentation);
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Write failed');
     });
   });
 });

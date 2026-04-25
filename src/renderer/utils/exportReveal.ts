@@ -18,7 +18,7 @@ function escapeHtml(text: string): string {
   return div.innerHTML;
 }
 
-function generateElementHTML(element: Element, _options?: ExportOptions): string {
+function generateElementHTML(element: Element): string {
   switch (element.type) {
     case 'text':
       return `<div style="position:absolute;left:${element.position.x}%;top:${element.position.y}%;width:${element.size.width}%;height:${element.size.height}%">${escapeHtml(element.content)}</div>`;
@@ -34,7 +34,7 @@ function generateElementHTML(element: Element, _options?: ExportOptions): string
 }
 
 export function generateSlideHTML(slide: Slide, options: ExportOptions = DEFAULT_OPTIONS): string {
-  const elementsHTML = slide.elements.map(element => generateElementHTML(element, options)).join('\n');
+  const elementsHTML = slide.elements.map(element => generateElementHTML(element)).join('\n');
 
   const notesHTML = options.includeNotes && slide.notes
     ? `\n      <aside class="notes">${escapeHtml(slide.notes)}</aside>`

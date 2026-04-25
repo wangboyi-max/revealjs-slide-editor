@@ -5,7 +5,7 @@ description: Reveal Editor 项目的自动化测试验证skill，运行测试、
 
 # Reveal Editor 验证
 
-自动化验证 Reveal Editor 项目的测试状态和构建成功。
+自动化验证 Reveal Editor 项目的测试状态和构建成功。如果执行过程中发现测试套件本身有问题，需要自行修复。
 
 ## 触发场景
 - "运行测试" / "run tests"

@@ -1,6 +1,7 @@
 {
   "name": "reveal-editor",
   "version": "1.0.0",
+  "type": "module",
   "description": "Reveal.js可视化编辑器，类似PowerPoint的拖拽式演示文稿编辑工具",
   "main": "dist/main/index.js",
   "scripts": {
@@ -41,6 +42,7 @@
     "@typescript-eslint/eslint-plugin": "^8.59.0",
     "@typescript-eslint/parser": "^8.59.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "@vitest/coverage-v8": "^4.1.5",
     "@vitest/ui": "^4.1.5",
     "concurrently": "^8.2.2",
     "electron": "^30.0.8",

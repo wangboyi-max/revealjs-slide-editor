@@ -1,6 +1,5 @@
 import { ipcMain, dialog, app, BrowserWindow } from 'electron';
 import * as fs from 'fs';
-import * as path from 'path';
 
 export function setupIpcHandlers(mainWindow: BrowserWindow): void {
   ipcMain.handle('file:read', async (_event, filePath: string) => {
