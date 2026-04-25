@@ -14,21 +14,15 @@ description: 构建并启动 Reveal Editor Electron GUI 界面
 2. **使用国内镜像（可选）**
    - 若下载慢，执行：`ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js`
 
-3. **构建 main 进程**
-   - 执行 `npm run build:main` 编译 TypeScript
-
-4. **启动 GUI**
-   - 开发模式：`npm run start`
-   - 或直接运行：`./node_modules/electron/dist/electron.exe .`
+3. **启动 GUI**
+   - 开发模式（推荐）：`npm run dev`
+   - 这会通过 `concurrently` 同时启动 Vite dev server 和 Electron 主进程
 
 ## 快速启动命令
 
 ```bash
-# 一行命令启动（开发模式）
-npm run start
-
-# 或直接运行 electron
-./node_modules/electron/dist/electron.exe .
+# 一行命令同时启动 Vite + Electron（开发模式）
+npm run dev
 ```
 
 ## 常见问题
