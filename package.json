@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Reveal.js可视化编辑器，类似PowerPoint的拖拽式演示文稿编辑工具",
-  "main": "dist/main/index.js",
+  "main": "dist/main/index.cjs",
   "scripts": {
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
     "dev:vite": "vite",
